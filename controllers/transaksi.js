@@ -2,10 +2,19 @@ import pool from "../db/db.js";
 import { BadRequestError } from "../errors/BadRequestError.js";
 import { NotFoundError } from "../errors/NotFoundError.js";
 import { InternalServerError } from "../errors/InternalServerError.js";
+import { groupByTransaksiId } from "../utils/groupByTransaksiId.js";
 
 // spesifik transaksi 1 pengguna
 export const getPenggunaTransaksi = async (req, res) => {
-  return res.json("pengguna transaksi");
+  const { penggunaId } = req.user;
+
+  const textQuery = `SELECT * FROM Transaksi t INNER JOIN Transaksi_Sampah ts ON t.transaksi_id = ts.transaksi_id INNER JOIN Sampah s ON ts.sampah_id = s.sampah_id INNER JOIN SUK ON s.suk_id = SUK.suk_id WHERE t.pengguna_id = $1`;
+  const values = [penggunaId];
+
+  const queryResult = await pool.query(textQuery, values);
+  const grouped = groupByTransaksiId(queryResult.rows);
+  //   return res.json(queryResult.rows);
+  return res.json(grouped);
 };
 
 // admin only
@@ -33,12 +42,13 @@ export const createTransaksi = async (req, res) => {
     const transaksiSampahValues = [];
     let placeHolderIdx = 1;
     transaksiSampah.forEach((item) => {
-      // transaksi_sampah_id, sampah_id, jumlah_sampah
+      // transaksi_id, sampah_id, jumlah_sampah
+      // sisanya buat latest harga, pake trigger
       transaksiSampahText.push(`($${placeHolderIdx++}, $${placeHolderIdx++}, $${placeHolderIdx++})`);
 
       transaksiSampahValues.push(transaksiId, item.sampahId, item.jumlahSampah);
     });
-    const transaksiSampahQuery = `INSERT INTO Transaksi_Sampah(transaksi_sampah_id, sampah_id, jumlah_sampah) VALUES ${transaksiSampahText.join(", ")}`;
+    const transaksiSampahQuery = `INSERT INTO Transaksi_Sampah(transaksi_id, sampah_id, jumlah_sampah) VALUES ${transaksiSampahText.join(", ")}`;
     await client.query(transaksiSampahQuery, transaksiSampahValues);
 
     await client.query("COMMIT");
