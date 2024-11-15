@@ -63,15 +63,17 @@ CREATE TABLE Sampah (
 CREATE TABLE Transaksi_Sampah (
     transaksi_sampah_id INT REFERENCES Transaksi(transaksi_id),
     sampah_id INT REFERENCES Sampah(sampah_id) NOT NULL,
+    harga_id INT REFERENCES Harga(harga_id) NOT NULL,
     jumlah_sampah INT NOT NULL,
     PRIMARY KEY (transaksi_sampah_id, sampah_id)
 );
 
 CREATE TABLE Harga (
+    harga_id SERIAL PRIMARY KEY,
     sampah_id INT REFERENCES Sampah(sampah_id),
     tanggal_ubah TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     harga_sampah INT NOT NULL,
-    PRIMARY KEY (sampah_id, tanggal_ubah)
+    UNIQUE (sampah_id, tanggal_ubah)
 );
 
 
