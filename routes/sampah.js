@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.get("/", getSampah);
 router.post("/", authMiddleware("admin"), fileUpload("./public").single("gambarSampah"), createSampah);
-router.patch("/:sampahId", authMiddleware("admin"), updateSampah);
+router.patch("/:sampahId", authMiddleware("admin"), fileUpload("./public").single("gambarSampah"), updateSampah);
 router.delete("/:sampahId", authMiddleware("admin"), deleteSampah);
 
 export default router;

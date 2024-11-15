@@ -1,6 +1,7 @@
 import pool from "../db/db.js";
 import { BadRequestError } from "../errors/BadRequestError.js";
 import { NotFoundError } from "../errors/NotFoundError.js";
+import { InternalServerError } from "../errors/InternalServerError.js";
 
 export const getSampah = async (req, res) => {
   const { jenis_sampah } = req.query;
@@ -49,8 +50,63 @@ export const createSampah = async (req, res) => {
   }
 };
 
-export const updateSampah = async (req, res) => {
+export const updateSampah = async (req, res, next) => {
   const { sampahId } = req.params;
+  const { namaSampah, harga } = req.body;
+
+  if (!namaSampah && !harga && !req.file) {
+    console.log("here", harga);
+    throw new BadRequestError("Required at least 1 field");
+  }
+
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+
+    const sampahValues = [];
+    const sampahField = [];
+
+    let placeHolderIdx = 1;
+    if (namaSampah) {
+      sampahField.push(`nama_sampah = $${placeHolderIdx++}`);
+      sampahValues.push(namaSampah);
+    }
+    if (harga) {
+      sampahField.push(`harga_sekarang = $${placeHolderIdx++}`);
+      sampahValues.push(harga);
+    }
+    if (req.file) {
+      sampahField.push(`url_gambar = $${placeHolderIdx++}`);
+      sampahValues.push(req.file.filename);
+    }
+
+    const queryTextSampah = `UPDATE Sampah SET ${sampahField.join(", ")} WHERE sampah_id = $${placeHolderIdx++}`;
+    sampahValues.push(sampahId);
+
+    const querySampahResult = await pool.query(queryTextSampah, sampahValues);
+
+    if (querySampahResult.rowCount === 0) {
+      next(new NotFoundError(`sampah_id ${sampahId} not found`));
+    }
+
+    if (harga) {
+      const queryTextHarga = `INSERT INTO Harga (harga_sampah, sampah_id) VALUES ($1, $2)`;
+      const hargaValues = [harga, sampahId];
+
+      await pool.query(queryTextHarga, hargaValues);
+    }
+
+    await client.query("COMMIT");
+
+    return res.json({ success: true, sampahId });
+  } catch (error) {
+    console.log(error);
+    await client.query("ROLLBACK");
+
+    throw new InternalServerError("An unexpected error occurred");
+  } finally {
+    client.release();
+  }
 
   return res.json("udpate sampah " + sampahId);
 };
