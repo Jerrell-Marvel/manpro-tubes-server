@@ -107,12 +107,19 @@ export const updateSampah = async (req, res, next) => {
   } finally {
     client.release();
   }
-
-  return res.json("udpate sampah " + sampahId);
 };
 
 export const deleteSampah = async (req, res) => {
   const { sampahId } = req.params;
 
-  return res.json("delete sampah " + sampahId);
+  const queryText = `UPDATE Sampah SET is_active = FALSE WHERE sampah_id = $1`;
+  const values = [sampahId];
+
+  const queryResult = await pool.query(queryText, values);
+
+  if (queryResult.rowCount === 0) {
+    throw new NotFoundError(`sampah_id ${sampahId} not found`);
+  }
+
+  return res.status(200).json({ success: true });
 };
