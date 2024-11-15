@@ -40,18 +40,18 @@ CREATE TABLE Transaksi (
 
 CREATE TABLE Jenis_Sampah (
     jenis_sampah_id SERIAL PRIMARY KEY,
-    nama_jenis_sampah VARCHAR(20) NOT NULL UNIQUE
+    nama_jenis_sampah VARCHAR(20) NOT NULL UNIQUE,
+    is_active BOOLEAN DEFAULT TRUE NOT NULL
 );
 
 CREATE TABLE SUK (
     suk_id SERIAL PRIMARY KEY,
     nama_suk VARCHAR(10) NOT NULL,
-    is_active BOOLEAN DEFAULT TRUE NOT NULL
 );
 
 CREATE TABLE Sampah (
     sampah_id SERIAL PRIMARY KEY,
-    nama_sampah VARCHAR(40) NOT NULL,
+    nama_sampah VARCHAR(40) NOT NULL UNIQUE,
     jenis_sampah_id INT REFERENCES Jenis_Sampah(jenis_sampah_id) NOT NULL,
     harga_sekarang INT NOT NULL,
     url_gambar VARCHAR(255),
