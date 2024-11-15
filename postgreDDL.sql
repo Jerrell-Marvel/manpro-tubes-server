@@ -69,7 +69,9 @@ CREATE TABLE Transaksi_Sampah (
 
 CREATE TABLE Harga (
     sampah_id INT REFERENCES Sampah(sampah_id),
-    tanggal_ubah TIMESTAMP NOT NULL,
+    tanggal_ubah TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     harga_sampah INT NOT NULL,
     PRIMARY KEY (sampah_id, tanggal_ubah)
 );
+
+
