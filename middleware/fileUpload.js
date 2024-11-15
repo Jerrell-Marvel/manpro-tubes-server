@@ -1,8 +1,7 @@
 import multer from "multer";
 import path from "path";
 import { BadRequestError } from "../errors/BadRequestError.js";
-import { UnprocessableEntityError } from "../errors/UnprocessableEntityError.js";
-
+import { PayloadTooLarge } from "../errors/PayloadToLargeError.js";
 export const fileUpload = (destination) => {
   const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -20,7 +19,7 @@ export const fileUpload = (destination) => {
       const productImagesCount = req.product.images.length;
 
       if (req.files.length + productImagesCount > 12) {
-        cb(new BadRequestError("maximum image exceeded"));
+        cb(new Payloa("maximum image exceeded"));
       }
     }
     const filetypes = /jpeg|jpg|png/i;
