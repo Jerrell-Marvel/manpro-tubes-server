@@ -76,4 +76,22 @@ CREATE TABLE Harga (
     UNIQUE (sampah_id, tanggal_ubah)
 );
 
+CREATE OR REPLACE FUNCTION set_latest_harga()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.harga_id := (
+        SELECT harga_id
+        FROM Harga
+        WHERE sampah_id = NEW.sampah_id
+        ORDER BY tanggal_ubah DESC
+        LIMIT 1
+    );
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER before_insert_transaksi_sampah
+BEFORE INSERT ON Transaksi_Sampah
+FOR EACH ROW
+EXECUTE FUNCTION set_latest_harga();
 
