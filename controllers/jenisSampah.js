@@ -3,7 +3,7 @@ import { BadRequestError } from "../errors/BadRequestError.js";
 import { NotFoundError } from "../errors/NotFoundError.js";
 
 export const getJenisSampah = async (req, res) => {
-  const queryText = `SELECT * FROM jenis_sampah`;
+  const queryText = `SELECT * FROM jenis_sampah WHERE is_active=TRUE`;
   const queryResult = await pool.query(queryText);
 
   return res.json(queryResult.rows);
