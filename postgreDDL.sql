@@ -45,7 +45,8 @@ CREATE TABLE Jenis_Sampah (
 
 CREATE TABLE SUK (
     suk_id SERIAL PRIMARY KEY,
-    nama_suk VARCHAR(10) NOT NULL
+    nama_suk VARCHAR(10) NOT NULL,
+    is_active BOOLEAN DEFAULT TRUE NOT NULL
 );
 
 CREATE TABLE Sampah (
@@ -54,7 +55,8 @@ CREATE TABLE Sampah (
     jenis_sampah_id INT REFERENCES Jenis_Sampah(jenis_sampah_id) NOT NULL,
     harga_sekarang INT NOT NULL,
     url_gambar VARCHAR(255),
-    suk_id INT REFERENCES SUK(suk_id)
+    suk_id INT REFERENCES SUK(suk_id),
+    is_active BOOLEAN DEFAULT TRUE NOT NULL
 );
 
 CREATE TABLE Transaksi_Sampah (
