@@ -1,4 +1,5 @@
 import { BadRequestError } from "../errors/BadRequestError.js";
+import { UnauthorizedError } from "../errors/UnauthorizedError.js";
 import bcrypt from "bcryptjs";
 import pool from "../db/db.js";
 import { text } from "express";
@@ -19,4 +20,8 @@ export const register = async (req, res) => {
   await pool.query(textQuery, values);
 
   return res.status(200).json({ success: true });
+};
+
+export const login = async (req, res) => {
+  return res.json("login");
 };
