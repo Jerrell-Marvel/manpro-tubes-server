@@ -19,7 +19,20 @@ export const getPenggunaTransaksi = async (req, res) => {
 
 // admin only
 export const getAllTransaksi = async (req, res) => {
-  return res.json("get all transaksi");
+  const { tipe_transaksi } = req.query;
+  let textQuery = `SELECT * FROM Transaksi t INNER JOIN Transaksi_Sampah ts ON t.transaksi_id = ts.transaksi_id INNER JOIN Sampah s ON ts.sampah_id = s.sampah_id INNER JOIN SUK ON s.suk_id = SUK.suk_id`;
+
+  const values = [];
+
+  if (tipe_transaksi && (tipe_transaksi === "masuk" || tipe_transaksi === "keluar")) {
+    textQuery += ` WHERE tipe_transaksi = $1`;
+    values.push(tipe_transaksi);
+  }
+
+  const queryResult = await pool.query(textQuery, values);
+  const grouped = groupByTransaksiId(queryResult.rows);
+
+  return res.json(grouped);
 };
 
 export const createTransaksi = async (req, res) => {
