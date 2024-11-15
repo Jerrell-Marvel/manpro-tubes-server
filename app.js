@@ -36,9 +36,14 @@ app.use(cors());
 
 // Routes import
 import userRoute from "./routes/user.js";
+import { authMiddleware } from "./middleware/auth.js";
 
 // Routes
 app.use("/api", userRoute);
+
+app.use("/test", authMiddleware("pengguna"), (req, res) => {
+  return res.json("success");
+});
 
 //Error handling
 app.use(errorHandler);
