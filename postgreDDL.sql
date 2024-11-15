@@ -53,6 +53,7 @@ CREATE TABLE Sampah (
     nama_sampah VARCHAR(40) NOT NULL,
     jenis_sampah_id INT REFERENCES Jenis_Sampah(jenis_sampah_id) NOT NULL,
     harga_sekarang INT NOT NULL,
+    url_gambar VARCHAR(255),
     suk_id INT REFERENCES SUK(suk_id)
 );
 
