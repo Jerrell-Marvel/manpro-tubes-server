@@ -1,0 +1,5 @@
+/node_modules
+.env
+/public
+/paimon/play-it-2024/saved_models
+/paimon/saved_models
