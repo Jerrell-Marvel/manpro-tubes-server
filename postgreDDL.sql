@@ -40,7 +40,7 @@ CREATE TABLE Transaksi (
 
 CREATE TABLE Jenis_Sampah (
     jenis_sampah_id SERIAL PRIMARY KEY,
-    nama_jenis_sampah VARCHAR(20) NOT NULL
+    nama_jenis_sampah VARCHAR(20) NOT NULL UNIQUE
 );
 
 CREATE TABLE SUK (
