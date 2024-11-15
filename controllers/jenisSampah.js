@@ -1,5 +1,6 @@
 import pool from "../db/db.js";
 import { BadRequestError } from "../errors/BadRequestError.js";
+import { NotFoundError } from "../errors/NotFoundError.js";
 
 export const getJenisSampah = async (req, res) => {
   const queryText = `SELECT * FROM jenis_sampah`;
@@ -27,7 +28,22 @@ export const createJenisSampah = async (req, res) => {
 
 export const updateJenisSampah = async (req, res) => {
   const { jenisSampahId } = req.params;
-  return res.json("update jenis sampah" + jenisSampahId);
+  const { namaJenisSampah } = req.body;
+
+  if (!namaJenisSampah) {
+    throw new BadRequestError("All specified field must be included");
+  }
+
+  const queryText = `UPDATE Jenis_Sampah SET nama_jenis_sampah = $1 WHERE jenis_sampah_id = $2;`;
+  const values = [namaJenisSampah, jenisSampahId];
+
+  const queryResult = await pool.query(queryText, values);
+
+  if (queryResult.rowCount === 0) {
+    throw new NotFoundError(`jenis_sampah_id ${jenisSampahId} not found`);
+  }
+
+  return res.json({ success: true });
 };
 
 export const deleteJenisSampah = async (req, res) => {
