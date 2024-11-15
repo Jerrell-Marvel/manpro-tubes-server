@@ -47,6 +47,7 @@ CREATE TABLE Jenis_Sampah (
 CREATE TABLE SUK (
     suk_id SERIAL PRIMARY KEY,
     nama_suk VARCHAR(10) NOT NULL,
+    is_active BOOLEAN DEFAULT TRUE NOT NULL
 );
 
 CREATE TABLE Sampah (
