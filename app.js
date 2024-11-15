@@ -34,12 +34,16 @@ app.use(express.json());
 //Setting up cors
 app.use(cors());
 
+// Middleware import
+import { authMiddleware } from "./middleware/auth.js";
+
 // Routes import
 import userRoute from "./routes/user.js";
-import { authMiddleware } from "./middleware/auth.js";
+import jenisSampahRoute from "./routes/jenisSampah.js";
 
 // Routes
 app.use("/api", userRoute);
+app.use("/api/jenis-sampah", jenisSampahRoute);
 
 app.use("/test", authMiddleware("pengguna"), (req, res) => {
   return res.json("success");
