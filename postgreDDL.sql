@@ -16,7 +16,7 @@ CREATE TABLE Pengguna (
     password VARCHAR(255) NOT NULL,
     no_hp VARCHAR(30),
     alamat VARCHAR(255), 
-    email VARCHAR(255),
+    email VARCHAR(255) UNIQUE,
     role pengguna_role NOT NULL DEFAULT 'pengguna',
     kel_id INT REFERENCES Kelurahan(kel_id) NOT NULL
 );
