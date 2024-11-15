@@ -32,8 +32,8 @@ CREATE TYPE tipe_transaksi_enum AS ENUM ('masuk', 'keluar');
 
 CREATE TABLE Transaksi (
     transaksi_id SERIAL PRIMARY KEY,
-    tanggal TIMESTAMP NOT NULL,
-    tipe_transaksi tipe_transaksi_enum NOT NULL,
+    tanggal TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    tipe_transaksi tipe_transaksi_enum NOT NULL DEFAULT 'masuk',
     pengguna_id INT REFERENCES pengguna(pengguna_id) NOT NULL,
     bs_pusat_id INT REFERENCES Bs_pusat(bs_pusat_id) NOT NULL
 );
