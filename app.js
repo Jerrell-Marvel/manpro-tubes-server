@@ -46,12 +46,14 @@ import userRoute from "./routes/user.js";
 import jenisSampahRoute from "./routes/jenisSampah.js";
 import sukRoute from "./routes/suk.js";
 import sampahRoute from "./routes/sampah.js";
+import transaksiRoute from "./routes/transaksi.js";
 
 // Routes
 app.use("/api", userRoute);
 app.use("/api/jenis-sampah", jenisSampahRoute);
 app.use("/api/SUK", sukRoute);
 app.use("/api/sampah", sampahRoute);
+app.use("/api/transaksi", transaksiRoute);
 
 app.use("/test", authMiddleware("pengguna"), (req, res) => {
   return res.json("success");
