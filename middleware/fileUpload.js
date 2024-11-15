@@ -1,7 +1,7 @@
 import multer from "multer";
 import path from "path";
 import { BadRequestError } from "../errors/BadRequestError.js";
-import { PayloadTooLarge } from "../errors/PayloadToLargeError.js";
+import { PayloadTooLarge } from "../errors/PayloadTooLargeError.js";
 export const fileUpload = (destination) => {
   const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -19,7 +19,7 @@ export const fileUpload = (destination) => {
       const productImagesCount = req.product.images.length;
 
       if (req.files.length + productImagesCount > 12) {
-        cb(new Payloa("maximum image exceeded"));
+        cb(new PayloadTooLarge("maximum image exceeded"));
       }
     }
     const filetypes = /jpeg|jpg|png/i;
