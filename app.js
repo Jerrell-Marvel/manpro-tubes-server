@@ -38,12 +38,15 @@ app.use(cors());
 import { authMiddleware } from "./middleware/auth.js";
 
 // Routes import
+
 import userRoute from "./routes/user.js";
 import jenisSampahRoute from "./routes/jenisSampah.js";
+import sukRoute from "./routes/suk.js";
 
 // Routes
 app.use("/api", userRoute);
 app.use("/api/jenis-sampah", jenisSampahRoute);
+app.use("/api/SUK", sukRoute);
 
 app.use("/test", authMiddleware("pengguna"), (req, res) => {
   return res.json("success");
