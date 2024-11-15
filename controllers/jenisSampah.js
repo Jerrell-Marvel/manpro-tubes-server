@@ -1,5 +1,10 @@
+import pool from "../db/db.js";
+
 export const getJenisSampah = async (req, res) => {
-  return res.json("get jenis sampah");
+  const queryText = `SELECT * FROM jenis_sampah`;
+  const queryResult = await pool.query(queryText);
+
+  return res.json(queryResult.rows);
 };
 
 export const createJenisSampah = async (req, res) => {
