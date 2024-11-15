@@ -43,10 +43,20 @@ export const updateJenisSampah = async (req, res) => {
     throw new NotFoundError(`jenis_sampah_id ${jenisSampahId} not found`);
   }
 
-  return res.json({ success: true });
+  return res.status(200).json({ success: true });
 };
 
 export const deleteJenisSampah = async (req, res) => {
   const { jenisSampahId } = req.params;
-  return res.json("delete jenis sampah" + jenisSampahId);
+
+  const queryText = `UPDATE Jenis_Sampah SET is_active = FALSE WHERE jenis_sampah_id = $1`;
+  const values = [jenisSampahId];
+
+  const queryResult = await pool.query(queryText, values);
+
+  if (queryResult.rowCount === 0) {
+    throw new NotFoundError(`jenis_sampah_id ${jenisSampahId} not found`);
+  }
+
+  return res.status(200).json({ success: true });
 };
