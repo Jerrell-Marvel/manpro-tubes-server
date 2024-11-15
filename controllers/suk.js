@@ -49,5 +49,14 @@ export const updateSUK = async (req, res) => {
 export const deleteSUK = async (req, res) => {
   const { sukId } = req.params;
 
-  return res.json("delete SUK" + sukId);
+  const queryText = `UPDATE SUK SET is_active = FALSE WHERE suk_id = $1`;
+  const values = [sukId];
+
+  const queryResult = await pool.query(queryText, values);
+
+  if (queryResult.rowCount === 0) {
+    throw new NotFoundError(`suk_id ${sukId} not found`);
+  }
+
+  return res.status(200).json({ success: true });
 };
