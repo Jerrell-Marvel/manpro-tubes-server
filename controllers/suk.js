@@ -30,7 +30,20 @@ export const updateSUK = async (req, res) => {
   const { sukId } = req.params;
   const { namaSUK } = req.body;
 
-  return res.json("update SUK " + sukId);
+  if (!namaSUK) {
+    throw new BadRequestError("All specified field must be included");
+  }
+
+  const queryText = `UPDATE SUK SET nama_SUK = $1 WHERE suk_id = $2;`;
+  const values = [namaSUK, sukId];
+
+  const queryResult = await pool.query(queryText, values);
+
+  if (queryResult.rowCount === 0) {
+    throw new NotFoundError(`suk_id ${sukId} not found`);
+  }
+
+  return res.status(200).json({ success: true });
 };
 
 export const deleteSUK = async (req, res) => {
