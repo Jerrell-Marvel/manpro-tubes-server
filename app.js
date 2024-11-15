@@ -25,8 +25,6 @@ import cors from "cors";
 // Model import (Use .js file extension!!!)
 import cookieParser from "cookie-parser";
 
-// Routes import
-
 // Cookie parse
 app.use(cookieParser());
 
@@ -36,10 +34,11 @@ app.use(express.json());
 //Setting up cors
 app.use(cors());
 
+// Routes import
+import userRoute from "./routes/user.js";
+
 // Routes
-app.use("/test", (req, res) => {
-  return res.json("yes");
-});
+app.use("/api", userRoute);
 
 //Error handling
 app.use(errorHandler);
