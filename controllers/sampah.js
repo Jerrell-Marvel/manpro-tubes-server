@@ -18,7 +18,35 @@ export const getSampah = async (req, res) => {
 };
 
 export const createSampah = async (req, res) => {
-  return res.json("create sampah");
+  const { namaSampah, jenisSampahId, harga, sukId } = req.body;
+
+  if (!req.file || !namaSampah || !jenisSampahId || !harga || !sukId) {
+    throw new BadRequestError("All specified field must be included");
+  }
+
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+
+    const queryTextSampah = `INSERT INTO Sampah (nama_sampah, jenis_sampah_id, harga_sekarang, url_gambar, suk_id) VALUES ($1, $2, $3, $4, $5) RETURNING sampah_id`;
+    const sampahValues = [namaSampah, jenisSampahId, harga, req.file.filename, sukId];
+    const queryResultSampah = await client.query(queryTextSampah, sampahValues);
+    const sampahId = queryResultSampah.rows[0].sampah_id;
+
+    const queryTextHarga = `INSERT INTO Harga (harga_sampah, sampah_id) VALUES ($1, $2)`;
+    const queryTextValues = [harga, sampahId];
+    await client.query(queryTextHarga, queryTextValues);
+
+    await client.query("COMMIT");
+    return res.json({ success: true, sampahId });
+  } catch (error) {
+    console.log(error);
+    await client.query("ROLLBACK");
+
+    throw new InternalServerError("An unexpected error occurred");
+  } finally {
+    client.release();
+  }
 };
 
 export const updateSampah = async (req, res) => {

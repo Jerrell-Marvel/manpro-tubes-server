@@ -6,6 +6,9 @@ const app = express();
 // const upload = multer();
 // app.use(upload.array("product-images"));
 
+// Serve static from public folder
+app.use(express.static("public"));
+
 // Express async errors
 import "express-async-errors";
 
