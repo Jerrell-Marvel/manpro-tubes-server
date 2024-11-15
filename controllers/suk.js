@@ -3,7 +3,10 @@ import { BadRequestError } from "../errors/BadRequestError.js";
 import { NotFoundError } from "../errors/NotFoundError.js";
 
 export const getSUK = async (req, res) => {
-  return res.json("get SUK");
+  const queryText = `SELECT * FROM SUK WHERE is_active=TRUE`;
+  const queryResult = await pool.query(queryText);
+
+  return res.json(queryResult.rows);
 };
 
 export const createSUK = async (req, res) => {
