@@ -10,7 +10,20 @@ export const getSUK = async (req, res) => {
 };
 
 export const createSUK = async (req, res) => {
-  return res.json("create SUK");
+  const { namaSUK } = req.body;
+
+  if (!namaSUK) {
+    throw new BadRequestError("All specified field must be included");
+  }
+
+  const queryText = `INSERT INTO SUK (nama_suk) VALUES ($1) RETURNING suk_id`;
+  const values = [namaSUK];
+
+  const queryResult = await pool.query(queryText, values);
+
+  const sukId = queryResult.rows[0].suk_id;
+
+  return res.json({ success: true, sukId });
 };
 
 export const updateSUK = async (req, res) => {
