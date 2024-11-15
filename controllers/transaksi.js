@@ -54,5 +54,21 @@ export const createTransaksi = async (req, res) => {
 };
 
 export const updateTransaksi = async (req, res) => {
-  return res.json("update transaksi");
+  const { tipeTransaksi } = req.body;
+  const { transaksiId } = req.params;
+
+  if (!tipeTransaksi || (tipeTransaksi !== "keluar" && tipeTransaksi !== "masuk")) {
+    throw new BadRequestError("status is required and has to be valid");
+  }
+
+  const textQuery = `UPDATE Transaksi SET tipe_transaksi = $1 WHERE transaksi_id = $2`;
+  const values = [tipeTransaksi, transaksiId];
+
+  const queryResult = await pool.query(textQuery, values);
+
+  if (queryResult.rowCount === 0) {
+    throw new NotFoundError(`transaksi_id ${transaksiId} not found`);
+  }
+
+  return res.json({ success: true });
 };
