@@ -8,7 +8,7 @@ import { groupByTransaksiId } from "../utils/groupByTransaksiId.js";
 export const getPenggunaTransaksi = async (req, res) => {
   const { penggunaId } = req.user;
 
-  const textQuery = `SELECT * FROM Transaksi t INNER JOIN Transaksi_Sampah ts ON t.transaksi_id = ts.transaksi_id INNER JOIN Sampah s ON ts.sampah_id = s.sampah_id INNER JOIN SUK ON s.suk_id = SUK.suk_id WHERE t.pengguna_id = $1`;
+  const textQuery = `SELECT * FROM Transaksi t INNER JOIN Transaksi_Sampah ts ON t.transaksi_id = ts.transaksi_id INNER JOIN Sampah s ON ts.sampah_id = s.sampah_id INNER JOIN SUK ON s.suk_id = SUK.suk_id INNER JOIN Harga h ON h.harga_id = ts.harga_id WHERE t.pengguna_id = $1`;
   const values = [penggunaId];
 
   const queryResult = await pool.query(textQuery, values);
@@ -20,7 +20,7 @@ export const getPenggunaTransaksi = async (req, res) => {
 // admin only
 export const getAllTransaksi = async (req, res) => {
   const { tipe_transaksi } = req.query;
-  let textQuery = `SELECT * FROM Transaksi t INNER JOIN Transaksi_Sampah ts ON t.transaksi_id = ts.transaksi_id INNER JOIN Sampah s ON ts.sampah_id = s.sampah_id INNER JOIN SUK ON s.suk_id = SUK.suk_id`;
+  let textQuery = `SELECT * FROM Transaksi t INNER JOIN Transaksi_Sampah ts ON t.transaksi_id = ts.transaksi_id INNER JOIN Sampah s ON ts.sampah_id = s.sampah_id INNER JOIN SUK ON s.suk_id = SUK.suk_id INNER JOIN Harga h ON h.harga_id = ts.harga_id`;
 
   const values = [];
 

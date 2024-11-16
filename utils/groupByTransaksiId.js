@@ -5,7 +5,6 @@ export function groupByTransaksiId(data) {
     let existingTransaksi = groupedData.find((group) => group.transaksi_id === item.transaksi_id);
 
     if (existingTransaksi) {
-      // If the transaksi_id exists, push the current transaksiSampah item to the transaksiSampah array
       existingTransaksi.transaksiSampah.push({
         sampah_id: item.sampah_id,
         harga_id: item.harga_id,
@@ -15,11 +14,11 @@ export function groupByTransaksiId(data) {
         harga_sekarang: item.harga_sekarang,
         url_gambar: item.url_gambar,
         suk_id: item.suk_id,
-        nama_suk: item.nama_suk, // Include nama_suk in the result
+        nama_suk: item.nama_suk,
         is_active: item.is_active,
+        harga_sampah: item.harga_sampah,
       });
     } else {
-      // If transaksi_id doesn't exist, create a new entry
       groupedData.push({
         transaksi_id: item.transaksi_id,
         tanggal: item.tanggal,
@@ -36,8 +35,9 @@ export function groupByTransaksiId(data) {
             harga_sekarang: item.harga_sekarang,
             url_gambar: item.url_gambar,
             suk_id: item.suk_id,
-            nama_suk: item.nama_suk, // Include nama_suk in the result
+            nama_suk: item.nama_suk,
             is_active: item.is_active,
+            harga_sampah: item.harga_sampah,
           },
         ],
       });
