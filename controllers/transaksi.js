@@ -54,14 +54,26 @@ export const createTransaksi = async (req, res) => {
     const transaksiSampahText = [];
     const transaksiSampahValues = [];
     let placeHolderIdx = 1;
-    transaksiSampah.forEach((item) => {
-      // transaksi_id, sampah_id, jumlah_sampah
-      // sisanya buat latest harga, pake trigger
-      transaksiSampahText.push(`($${placeHolderIdx++}, $${placeHolderIdx++}, $${placeHolderIdx++})`);
 
-      transaksiSampahValues.push(transaksiId, item.sampahId, item.jumlahSampah);
-    });
-    const transaksiSampahQuery = `INSERT INTO Transaksi_Sampah(transaksi_id, sampah_id, jumlah_sampah) VALUES ${transaksiSampahText.join(", ")}`;
+    for (const item of transaksiSampah) {
+      // get dlu harga_id_sekarangnya
+      const textQueryGetSampah = `SELECT sampah_id, harga_id_sekarang FROM Sampah WHERE sampah_id = $1`;
+      const getSampahValues = [item.sampahId];
+      const getSampahQueryResult = await client.query(textQueryGetSampah, getSampahValues);
+      if (getSampahQueryResult.rowCount === 0) {
+        next(new BadRequestError(`sampah_id ${item.sampahId} doesn't exist`));
+      }
+
+      const hargaIdSekarang = getSampahQueryResult.rows[0].harga_id_sekarang;
+
+      // transaksi_id, sampah_id, jumlah_sampah, harga_id
+      transaksiSampahText.push(`($${placeHolderIdx++}, $${placeHolderIdx++}, $${placeHolderIdx++}, $${placeHolderIdx++})`);
+
+      transaksiSampahValues.push(transaksiId, item.sampahId, item.jumlahSampah, hargaIdSekarang);
+    }
+
+    const transaksiSampahQuery = `INSERT INTO Transaksi_Sampah(transaksi_id, sampah_id, jumlah_sampah, harga_id) VALUES ${transaksiSampahText.join(", ")}`;
+
     await client.query(transaksiSampahQuery, transaksiSampahValues);
 
     await client.query("COMMIT");

@@ -71,7 +71,7 @@ ALTER TABLE Sampah
 ADD COLUMN harga_id_sekarang INT REFERENCES Harga(harga_id);
 
 CREATE TABLE Transaksi_Sampah (
-    transaksi_sampah_id INT REFERENCES Transaksi(transaksi_id),
+    transaksi_id INT REFERENCES Transaksi(transaksi_id),
     sampah_id INT REFERENCES Sampah(sampah_id) NOT NULL,
     harga_id INT REFERENCES Harga(harga_id) NOT NULL,
     jumlah_sampah INT NOT NULL,
