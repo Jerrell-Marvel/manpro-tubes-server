@@ -29,14 +29,19 @@ export const createSampah = async (req, res) => {
   try {
     await client.query("BEGIN");
 
-    const queryTextSampah = `INSERT INTO Sampah (nama_sampah, jenis_sampah_id, harga_sekarang, url_gambar, suk_id) VALUES ($1, $2, $3, $4, $5) RETURNING sampah_id`;
-    const sampahValues = [namaSampah, jenisSampahId, harga, req.file.filename, sukId];
+    const queryTextSampah = `INSERT INTO Sampah (nama_sampah, jenis_sampah_id, url_gambar, suk_id) VALUES ($1, $2, $3, $4) RETURNING sampah_id`;
+    const sampahValues = [namaSampah, jenisSampahId, req.file.filename, sukId];
     const queryResultSampah = await client.query(queryTextSampah, sampahValues);
     const sampahId = queryResultSampah.rows[0].sampah_id;
 
-    const queryTextHarga = `INSERT INTO Harga (harga_sampah, sampah_id) VALUES ($1, $2)`;
+    const queryTextHarga = `INSERT INTO Harga (harga_sampah, sampah_id) VALUES ($1, $2) RETURNING harga_id`;
     const queryTextValues = [harga, sampahId];
-    await client.query(queryTextHarga, queryTextValues);
+    const queryResultHarga = await client.query(queryTextHarga, queryTextValues);
+    const hargaId = queryResultHarga.rows[0].harga_id;
+
+    const queryTextUpdateSampah = `UPDATE Sampah SET harga_id_sekarang = $1 WHERE sampah_id = $2`;
+    const updateSampahValues = [hargaId, sampahId];
+    await client.query(queryTextUpdateSampah, updateSampahValues);
 
     await client.query("COMMIT");
     return res.json({ success: true, sampahId });
@@ -72,8 +77,14 @@ export const updateSampah = async (req, res, next) => {
       sampahValues.push(namaSampah);
     }
     if (harga) {
-      sampahField.push(`harga_sekarang = $${placeHolderIdx++}`);
-      sampahValues.push(harga);
+      const queryTextAddHarga = `INSERT INTO Harga (sampah_id, harga_sampah) VALUES ($1, $2) RETURNING harga_id`;
+      const addHargaValues = [sampahId, harga];
+      const addHargaQueryResult = await client.query(queryTextAddHarga, addHargaValues);
+
+      const hargaId = addHargaQueryResult.rows[0].harga_id;
+
+      sampahField.push(`harga_id_sekarang = $${placeHolderIdx++}`);
+      sampahValues.push(hargaId);
     }
     if (req.file) {
       sampahField.push(`url_gambar = $${placeHolderIdx++}`);
@@ -83,17 +94,10 @@ export const updateSampah = async (req, res, next) => {
     const queryTextSampah = `UPDATE Sampah SET ${sampahField.join(", ")} WHERE sampah_id = $${placeHolderIdx++}`;
     sampahValues.push(sampahId);
 
-    const querySampahResult = await pool.query(queryTextSampah, sampahValues);
+    const querySampahResult = await client.query(queryTextSampah, sampahValues);
 
     if (querySampahResult.rowCount === 0) {
       next(new NotFoundError(`sampah_id ${sampahId} not found`));
-    }
-
-    if (harga) {
-      const queryTextHarga = `INSERT INTO Harga (harga_sampah, sampah_id) VALUES ($1, $2)`;
-      const hargaValues = [harga, sampahId];
-
-      await pool.query(queryTextHarga, hargaValues);
     }
 
     await client.query("COMMIT");

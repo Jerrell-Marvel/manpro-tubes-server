@@ -53,19 +53,10 @@ CREATE TABLE SUK (
 CREATE TABLE Sampah (
     sampah_id SERIAL PRIMARY KEY,
     nama_sampah VARCHAR(40) NOT NULL UNIQUE,
-    jenis_sampah_id INT REFERENCES Jenis_Sampah(jenis_sampah_id) NOT NULL,
-    harga_id_sekarang INT REFERENCES Harga(harga_id) NOT NULL,
+    jenis_sampah_id INT NOT NULL REFERENCES Jenis_Sampah(jenis_sampah_id),
     url_gambar VARCHAR(255),
     suk_id INT REFERENCES SUK(suk_id),
     is_active BOOLEAN DEFAULT TRUE NOT NULL
-);
-
-CREATE TABLE Transaksi_Sampah (
-    transaksi_sampah_id INT REFERENCES Transaksi(transaksi_id),
-    sampah_id INT REFERENCES Sampah(sampah_id) NOT NULL,
-    harga_id INT REFERENCES Harga(harga_id) NOT NULL,
-    jumlah_sampah INT NOT NULL,
-    PRIMARY KEY (transaksi_sampah_id, sampah_id)
 );
 
 CREATE TABLE Harga (
@@ -74,5 +65,16 @@ CREATE TABLE Harga (
     tanggal_ubah TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     harga_sampah INT NOT NULL,
     UNIQUE (sampah_id, tanggal_ubah)
+);
+
+ALTER TABLE Sampah
+ADD COLUMN harga_id_sekarang INT REFERENCES Harga(harga_id);
+
+CREATE TABLE Transaksi_Sampah (
+    transaksi_sampah_id INT REFERENCES Transaksi(transaksi_id),
+    sampah_id INT REFERENCES Sampah(sampah_id) NOT NULL,
+    harga_id INT REFERENCES Harga(harga_id) NOT NULL,
+    jumlah_sampah INT NOT NULL,
+    PRIMARY KEY (transaksi_sampah_id, sampah_id)
 );
 
