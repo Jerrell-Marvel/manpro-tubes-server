@@ -48,6 +48,7 @@ import sukRoute from "./routes/suk.js";
 import sampahRoute from "./routes/sampah.js";
 import transaksiRoute from "./routes/transaksi.js";
 import kelurahanRoute from "./routes/kelurahan.js";
+import kecamatanRoute from "./routes/kecamatan.js";
 
 // Routes
 app.use("/api", userRoute);
@@ -56,6 +57,7 @@ app.use("/api/SUK", sukRoute);
 app.use("/api/sampah", sampahRoute);
 app.use("/api/transaksi", transaksiRoute);
 app.use("/api/kelurahan", kelurahanRoute);
+app.use("/api/kecamatan", kecamatanRoute);
 
 app.use("/test", authMiddleware("pengguna"), (req, res) => {
   return res.json("success");
