@@ -2,6 +2,7 @@ import pool from "../db/db.js";
 import { BadRequestError } from "../errors/BadRequestError.js";
 import { NotFoundError } from "../errors/NotFoundError.js";
 import { InternalServerError } from "../errors/InternalServerError.js";
+import { query } from "express";
 
 export const getSampah = async (req, res) => {
   const { jenis_sampah } = req.query;
@@ -16,6 +17,22 @@ export const getSampah = async (req, res) => {
 
   const queryResult = await pool.query(queryText, values);
   return res.json(queryResult.rows);
+};
+
+export const getSingleSampah = async (req, res) => {
+  const { sampahId } = req.params;
+
+  const queryText = `SELECT * FROM Sampah s INNER JOIN Jenis_Sampah js ON s.jenis_sampah_id = js.jenis_sampah_id INNER JOIN SUK ON s.suk_id = SUK.suk_id INNER JOIN Harga h on s.harga_id_sekarang = h.harga_id WHERE s.is_active=TRUE AND s.sampah_id=$1`;
+
+  const values = [sampahId];
+
+  const queryResult = await pool.query(queryText, values);
+
+  if (queryResult.rowCount === 0) {
+    throw new NotFoundError("No sampah found");
+  }
+
+  return res.json(queryResult.rows[0]);
 };
 
 export const createSampah = async (req, res) => {
