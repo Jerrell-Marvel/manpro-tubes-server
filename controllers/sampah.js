@@ -60,6 +60,9 @@ export const createSampah = async (req, res) => {
     const updateSampahValues = [hargaId, sampahId];
     await client.query(queryTextUpdateSampah, updateSampahValues);
 
+    const queryTextInventorySampah = "INSERT INTO Inventory_Sampah (sampah_id) VALUES ($1)";
+    await client.query(queryTextInventorySampah, [sampahId]);
+
     await client.query("COMMIT");
     return res.json({ success: true, sampahId });
   } catch (error) {
