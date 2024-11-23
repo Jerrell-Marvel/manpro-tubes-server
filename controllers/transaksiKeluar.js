@@ -66,7 +66,7 @@ export const createTransaksiKeluar = async (req, res) => {
       const hargaIdSekarang = getSampahQueryResult.rows[0].harga_id_sekarang;
 
       // transaksi_keluar_id, sampah_id, jumlah_sampah, harga_id
-      transaksiSampahText.push(`($${placeHolderIdx++}, $${placeHolderIdx++}, $${placeHolderIdx++}, $${placeHolderIdx})`);
+      transaksiSampahText.push(`($${placeHolderIdx++}, $${placeHolderIdx++}, $${placeHolderIdx++}, $${placeHolderIdx++})`);
 
       transaksiSampahValues.push(transaksiId, item.sampahId, item.jumlahSampah, hargaIdSekarang);
     }
