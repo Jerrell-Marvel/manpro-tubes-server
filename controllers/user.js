@@ -50,3 +50,10 @@ export const login = async (req, res) => {
 
   return res.status(200).json({ success: true, token });
 };
+
+export const getAllUsers = async (req, res) => {
+  const queryText = "SELECT * FROM Pengguna";
+  const queryResult = await pool.query(queryText);
+
+  return res.json(queryResult.rows);
+};
