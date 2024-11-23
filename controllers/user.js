@@ -3,6 +3,7 @@ import { UnauthorizedError } from "../errors/UnauthorizedError.js";
 import bcrypt from "bcryptjs";
 import pool from "../db/db.js";
 import jwt from "jsonwebtoken";
+import { NotFoundError } from "../errors/NotFoundError.js";
 
 export const register = async (req, res) => {
   const { password, noHp, alamat, email, kelId, nama } = req.body;
@@ -61,5 +62,49 @@ export const getAllUsers = async (req, res) => {
 export const updateUser = async (req, res) => {
   const { penggunaId } = req.params;
 
-  return res.json(penggunaId);
+  const { nama, noHp, alamat, email, kelurahanId } = req.body;
+
+  if (!nama && !noHp && !alamat && !email && !kelurahanId) {
+    throw new BadRequestError("No specified field");
+  }
+
+  const penggunaValues = [];
+  const penggunaField = [];
+
+  let placeHolderIdx = 1;
+  if (nama) {
+    penggunaField.push(`nama=$${placeHolderIdx++}`);
+    penggunaValues.push(nama);
+  }
+
+  if (noHp) {
+    penggunaField.push(`no_hp=$${placeHolderIdx++}`);
+    penggunaValues.push(noHp);
+  }
+
+  if (alamat) {
+    penggunaField.push(`alamat=$${placeHolderIdx++}`);
+    penggunaValues.push(alamat);
+  }
+
+  if (email) {
+    penggunaField.push(`email=$${placeHolderIdx++}`);
+    penggunaValues.push(email);
+  }
+
+  if (kelurahanId) {
+    penggunaField.push(`kelurahan_id=$${placeHolderIdx++}`);
+    penggunaValues.push(kelurahanId);
+  }
+
+  const queryText = `UPDATE pengguna SET ${penggunaField.join(", ")} WHERE pengguna_id=$${placeHolderIdx++}`;
+  penggunaValues.push(penggunaId);
+
+  const queryResult = await pool.query(queryText, penggunaValues);
+
+  if (queryResult.rowCount === 0) {
+    throw new NotFoundError("No pengguna found");
+  }
+
+  return res.json({ success: true });
 };
