@@ -75,7 +75,7 @@ export const getAllTransaksi = async (req, res) => {
   return res.json(grouped);
 };
 
-export const createTransaksi = async (req, res) => {
+export const createTransaksi = async (req, res, next) => {
   const { transaksiSampah, penggunaId, bsPusatId } = req.body;
 
   if (!transaksiSampah || transaksiSampah.length === 0 || !penggunaId || !bsPusatId) {
@@ -86,10 +86,10 @@ export const createTransaksi = async (req, res) => {
   try {
     await client.query("BEGIN");
 
-    const transaksiTextQuery = `INSERT INTO transaksi (pengguna_id, bs_pusat_id) VALUES($1, $2) RETURNING transaksi_id`;
+    const transaksiTextQuery = `INSERT INTO Transaksi_Masuk (pengguna_id, bs_pusat_id) VALUES($1, $2) RETURNING transaksi_masuk_id`;
     const transaksiValues = [penggunaId, bsPusatId];
     const transaksiQueryResult = await client.query(transaksiTextQuery, transaksiValues);
-    const transaksiId = transaksiQueryResult.rows[0].transaksi_id;
+    const transaksiId = transaksiQueryResult.rows[0].transaksi_masuk_id;
 
     const transaksiSampahText = [];
     const transaksiSampahValues = [];
@@ -112,9 +112,16 @@ export const createTransaksi = async (req, res) => {
       transaksiSampahValues.push(transaksiId, item.sampahId, item.jumlahSampah, hargaIdSekarang);
     }
 
-    const transaksiSampahQuery = `INSERT INTO Transaksi_Sampah(transaksi_id, sampah_id, jumlah_sampah, harga_id) VALUES ${transaksiSampahText.join(", ")}`;
+    const transaksiSampahQuery = `INSERT INTO Transaksi_Masuk_Sampah(transaksi_masuk_id, sampah_id, jumlah_sampah, harga_id) VALUES ${transaksiSampahText.join(", ")}`;
 
     await client.query(transaksiSampahQuery, transaksiSampahValues);
+
+    for (const item of transaksiSampah) {
+      const updateTextQuery = "UPDATE Inventory_Sampah SET kuantitas=kuantitas+$1 WHERE sampah_id=$2";
+      const updateTextValues = [item.jumlahSampah, item.sampahId];
+
+      await client.query(updateTextQuery, updateTextValues);
+    }
 
     await client.query("COMMIT");
     return res.json({ success: true });

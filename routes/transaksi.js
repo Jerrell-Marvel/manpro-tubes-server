@@ -4,9 +4,11 @@ import { getAllTransaksi, createTransaksi, getPenggunaTransaksi, updateTransaksi
 
 const router = express.Router();
 
-router.get("/", authMiddleware("pengguna"), getPenggunaTransaksi);
-router.get("/all", authMiddleware("admin"), getAllTransaksi);
-router.post("/", authMiddleware("admin"), createTransaksi);
+router.get("/masuk", authMiddleware("pengguna"), getPenggunaTransaksi);
+router.get("/masuk/all", authMiddleware("admin"), getAllTransaksi);
+
+router.post("/masuk", authMiddleware("admin"), createTransaksi);
+
 router.patch("/:transaksiId", authMiddleware("admin"), updateTransaksi);
 
 export default router;
