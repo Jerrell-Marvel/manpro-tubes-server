@@ -7,7 +7,7 @@ import { groupByTransaksiKeluarId } from "../utils/groupByTransaksiKeluarId.js";
 export const getTransaksiKeluar = async (req, res) => {
   const { start, end } = req.query;
 
-  let textQuery = `SELECT * FROM Transaksi_Keluar t INNER JOIN Transaksi_Keluar_Sampah ts ON t.transaksi_keluar_id = ts.transaksi_keluar_id INNER JOIN Sampah s ON ts.sampah_id = s.sampah_id INNER JOIN SUK ON s.suk_id = SUK.suk_id`;
+  let textQuery = `SELECT * FROM Transaksi_Keluar t INNER JOIN Transaksi_Keluar_Sampah ts ON t.transaksi_keluar_id = ts.transaksi_keluar_id INNER JOIN Sampah s ON ts.sampah_id = s.sampah_id INNER JOIN SUK ON s.suk_id = SUK.suk_id INNER JOIN Harga h ON h.harga_id = ts.harga_id`;
 
   const values = [];
   const whereClause = [];
@@ -56,13 +56,22 @@ export const createTransaksiKeluar = async (req, res) => {
     let placeHolderIdx = 1;
 
     for (const item of transaksiSampah) {
-      // transaksi_keluar_id, sampah_id, jumlah_sampah
-      transaksiSampahText.push(`($${placeHolderIdx++}, $${placeHolderIdx++}, $${placeHolderIdx++})`);
+      // get dlu harga_id_sekarangnya
+      const textQueryGetSampah = `SELECT sampah_id, harga_id_sekarang FROM Sampah WHERE sampah_id = $1`;
+      const getSampahValues = [item.sampahId];
+      const getSampahQueryResult = await client.query(textQueryGetSampah, getSampahValues);
+      if (getSampahQueryResult.rowCount === 0) {
+        next(new BadRequestError(`sampah_id ${item.sampahId} doesn't exist`));
+      }
+      const hargaIdSekarang = getSampahQueryResult.rows[0].harga_id_sekarang;
 
-      transaksiSampahValues.push(transaksiId, item.sampahId, item.jumlahSampah);
+      // transaksi_keluar_id, sampah_id, jumlah_sampah, harga_id
+      transaksiSampahText.push(`($${placeHolderIdx++}, $${placeHolderIdx++}, $${placeHolderIdx++}, $${placeHolderIdx})`);
+
+      transaksiSampahValues.push(transaksiId, item.sampahId, item.jumlahSampah, hargaIdSekarang);
     }
 
-    const transaksiSampahQuery = `INSERT INTO Transaksi_Keluar_Sampah(transaksi_keluar_id, sampah_id, jumlah_sampah) VALUES ${transaksiSampahText.join(", ")}`;
+    const transaksiSampahQuery = `INSERT INTO Transaksi_Keluar_Sampah(transaksi_keluar_id, sampah_id, jumlah_sampah, harga_id) VALUES ${transaksiSampahText.join(", ")}`;
 
     await client.query(transaksiSampahQuery, transaksiSampahValues);
 
