@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import pool from "../db/db.js";
 import jwt from "jsonwebtoken";
 import { NotFoundError } from "../errors/NotFoundError.js";
+import { query } from "express";
 
 export const register = async (req, res) => {
   const { password, noHp, alamat, email, kelId, nama } = req.body;
@@ -110,5 +111,15 @@ export const updateUser = async (req, res) => {
 };
 
 export const getSingleUser = async (req, res) => {
-  return res.json("sklfjs");
+  const { penggunaId } = req.params;
+
+  const queryText = "SELECT * FROM Pengguna WHERE pengguna_id=$1";
+
+  const queryResult = await pool.query(queryText, [penggunaId]);
+
+  if (queryResult.rowCount === 0) {
+    throw new NotFoundError(`No pengguna with pengguna_id=${penggunaId}`);
+  }
+
+  return res.json(queryResult.rows[0]);
 };
