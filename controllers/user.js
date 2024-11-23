@@ -57,3 +57,9 @@ export const getAllUsers = async (req, res) => {
 
   return res.json(queryResult.rows);
 };
+
+export const updateUser = async (req, res) => {
+  const { penggunaId } = req.params;
+
+  return res.json(penggunaId);
+};
