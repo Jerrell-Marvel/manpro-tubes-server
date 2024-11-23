@@ -108,3 +108,7 @@ export const updateUser = async (req, res) => {
 
   return res.json({ success: true });
 };
+
+export const getSingleUser = async (req, res) => {
+  return res.json("sklfjs");
+};
