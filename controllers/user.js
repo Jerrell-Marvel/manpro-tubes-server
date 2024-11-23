@@ -54,7 +54,7 @@ export const login = async (req, res) => {
 };
 
 export const getAllUsers = async (req, res) => {
-  const queryText = "SELECT * FROM Pengguna";
+  const queryText = "SELECT * FROM Pengguna p INNER JOIN Kelurahan k on p.kel_id = k.kel_id INNER JOIN kecamatan kec ON k.kec_id = kec.kec_id";
   const queryResult = await pool.query(queryText);
 
   return res.json(queryResult.rows);
