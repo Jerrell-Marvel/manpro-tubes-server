@@ -28,12 +28,9 @@ CREATE TABLE Bs_Pusat (
     kel_id INT REFERENCES Kelurahan(kel_id) NOT NULL
 );
 
-CREATE TYPE tipe_transaksi_enum AS ENUM ('masuk', 'keluar');
-
-CREATE TABLE Transaksi (
-    transaksi_id SERIAL PRIMARY KEY,
+CREATE TABLE Transaksi_Masuk (
+    transaksi_masuk_id SERIAL PRIMARY KEY,
     tanggal TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    tipe_transaksi tipe_transaksi_enum NOT NULL DEFAULT 'masuk',
     pengguna_id INT REFERENCES pengguna(pengguna_id) NOT NULL,
     bs_pusat_id INT REFERENCES Bs_pusat(bs_pusat_id) NOT NULL
 );
@@ -70,11 +67,23 @@ CREATE TABLE Harga (
 ALTER TABLE Sampah
 ADD COLUMN harga_id_sekarang INT REFERENCES Harga(harga_id);
 
-CREATE TABLE Transaksi_Sampah (
-    transaksi_id INT REFERENCES Transaksi(transaksi_id),
+CREATE TABLE Inventory_Sampah(
+    inventory_sampah_id SERIAL PRIMARY KEY,
+    sampah_id INT NOT NULL REFERENCES Sampah(sampah_id) UNIQUE,
+    kuantitas INT NOT NULL DEFAULT 0
+);
+
+CREATE TABLE Transaksi_Keluar(
+    transaksi_keluar_id SERIAL PRIMARY KEY,
+    sampah_id INT NOT NULL REFERENCES Sampah(sampah_id) UNIQUE,
+    kuantitas INT NOT NULL
+);
+
+CREATE TABLE Transaksi_Masuk_Sampah (
+    transaksi_masuk_id INT REFERENCES Transaksi_Masuk(transaksi_masuk_id),
     sampah_id INT REFERENCES Sampah(sampah_id) NOT NULL,
     harga_id INT REFERENCES Harga(harga_id) NOT NULL,
     jumlah_sampah INT NOT NULL,
-    PRIMARY KEY (transaksi_id, sampah_id)
+    PRIMARY KEY (transaksi_masuk_id, sampah_id)
 );
 
