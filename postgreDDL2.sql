@@ -80,7 +80,7 @@ CREATE TABLE Transaksi_Keluar(
 
 CREATE TABLE Transaksi_Keluar_Sampah(
     transaksi_keluar_id INT REFERENCES Transaksi_Keluar(transaksi_keluar_id),
-    sampah_id INT NOT NULL REFERENCES Sampah(sampah_id) UNIQUE,
+    sampah_id INT NOT NULL REFERENCES Sampah(sampah_id),
     jumlah_sampah INT NOT NULL,
     harga_id INT REFERENCES Harga(harga_id),
     PRIMARY KEY (transaksi_keluar_id, sampah_id)

@@ -1,9 +1,38 @@
+import { query } from "express";
 import pool from "../db/db.js";
 import { BadRequestError } from "../errors/BadRequestError.js";
 import { InternalServerError } from "../errors/InternalServerError.js";
+import { groupByTransaksiKeluarId } from "../utils/groupByTransaksiKeluarId.js";
 
 export const getTransaksiKeluar = async (req, res) => {
-  return res.json("create transaksi keluar");
+  const { start, end } = req.query;
+
+  let textQuery = `SELECT * FROM Transaksi_Keluar t INNER JOIN Transaksi_Keluar_Sampah ts ON t.transaksi_keluar_id = ts.transaksi_keluar_id INNER JOIN Sampah s ON ts.sampah_id = s.sampah_id INNER JOIN SUK ON s.suk_id = SUK.suk_id`;
+
+  const values = [];
+  const whereClause = [];
+  let placeHolderCtr = 1;
+
+  if (start) {
+    whereClause.push(`t.tanggal::DATE >= $${placeHolderCtr++}`);
+    values.push(`'${start}'`);
+  }
+
+  if (end) {
+    whereClause.push(`t.tanggal::DATE <= $${placeHolderCtr++}`);
+    values.push(`'${end}'`);
+  }
+
+  if (values.length !== 0) {
+    textQuery += " WHERE ";
+    const whereClauseStr = whereClause.join(" AND ");
+    textQuery += whereClauseStr;
+  }
+
+  const queryResult = await pool.query(textQuery, values);
+  const grouped = groupByTransaksiKeluarId(queryResult.rows);
+
+  return res.json(grouped);
 };
 
 export const createTransaksiKeluar = async (req, res) => {
