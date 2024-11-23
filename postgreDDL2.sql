@@ -75,6 +75,6 @@ CREATE TABLE Transaksi_Sampah (
     sampah_id INT REFERENCES Sampah(sampah_id) NOT NULL,
     harga_id INT REFERENCES Harga(harga_id) NOT NULL,
     jumlah_sampah INT NOT NULL,
-    PRIMARY KEY (transaksi_sampah_id, sampah_id)
+    PRIMARY KEY (transaksi_id, sampah_id)
 );
 
