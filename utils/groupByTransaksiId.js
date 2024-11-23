@@ -1,48 +1,26 @@
 export function groupByTransaksiId(data) {
-  const groupedData = [];
+  // Group the data by `transaksi_masuk_id`
+  const groupedData = data.reduce((result, item) => {
+    const { transaksi_masuk_id, tanggal, pengguna_id, bs_pusat_id, ...sampahData } = item;
 
-  data.forEach((item) => {
-    let existingTransaksi = groupedData.find((group) => group.transaksi_id === item.transaksi_id);
-
-    if (existingTransaksi) {
-      existingTransaksi.transaksiSampah.push({
-        sampah_id: item.sampah_id,
-        harga_id: item.harga_id,
-        jumlah_sampah: item.jumlah_sampah,
-        nama_sampah: item.nama_sampah,
-        jenis_sampah_id: item.jenis_sampah_id,
-        harga_sekarang: item.harga_sekarang,
-        url_gambar: item.url_gambar,
-        suk_id: item.suk_id,
-        nama_suk: item.nama_suk,
-        is_active: item.is_active,
-        harga_sampah: item.harga_sampah,
-      });
-    } else {
-      groupedData.push({
-        transaksi_id: item.transaksi_id,
-        tanggal: item.tanggal,
-        tipe_transaksi: item.tipe_transaksi,
-        pengguna_id: item.pengguna_id,
-        bs_pusat_id: item.bs_pusat_id,
-        transaksiSampah: [
-          {
-            sampah_id: item.sampah_id,
-            harga_id: item.harga_id,
-            jumlah_sampah: item.jumlah_sampah,
-            nama_sampah: item.nama_sampah,
-            jenis_sampah_id: item.jenis_sampah_id,
-            harga_sekarang: item.harga_sekarang,
-            url_gambar: item.url_gambar,
-            suk_id: item.suk_id,
-            nama_suk: item.nama_suk,
-            is_active: item.is_active,
-            harga_sampah: item.harga_sampah,
-          },
-        ],
-      });
+    // Find or create the transaksi object
+    let transaksi = result.find((t) => t.transaksi_masuk_id === transaksi_masuk_id);
+    if (!transaksi) {
+      transaksi = {
+        transaksi_masuk_id,
+        tanggal,
+        pengguna_id,
+        bs_pusat_id,
+        transaksiSampah: [],
+      };
+      result.push(transaksi);
     }
-  });
+
+    // Add the current sampah data to the transaksiSampah array
+    transaksi.transaksiSampah.push(sampahData);
+
+    return result;
+  }, []);
 
   return groupedData;
 }

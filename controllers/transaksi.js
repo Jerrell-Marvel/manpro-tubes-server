@@ -10,7 +10,7 @@ export const getPenggunaTransaksi = async (req, res) => {
   const { penggunaId } = req.user;
   const { start, end } = req.query;
 
-  let textQuery = `SELECT * FROM Transaksi t INNER JOIN Transaksi_Sampah ts ON t.transaksi_id = ts.transaksi_id INNER JOIN Sampah s ON ts.sampah_id = s.sampah_id INNER JOIN SUK ON s.suk_id = SUK.suk_id INNER JOIN Harga h ON h.harga_id = ts.harga_id WHERE `;
+  let textQuery = `SELECT * FROM Transaksi_Masuk t INNER JOIN Transaksi_Masuk_Sampah ts ON t.transaksi_masuk_id = ts.transaksi_masuk_id INNER JOIN Sampah s ON ts.sampah_id = s.sampah_id INNER JOIN SUK ON s.suk_id = SUK.suk_id INNER JOIN Harga h ON h.harga_id = ts.harga_id WHERE `;
 
   let placeHolderCtr = 1;
   const whereClause = [`t.pengguna_id = $${placeHolderCtr++}`];
@@ -39,19 +39,14 @@ export const getPenggunaTransaksi = async (req, res) => {
 
 // admin only
 export const getAllTransaksi = async (req, res) => {
-  const { tipe_transaksi, start, end } = req.query;
+  const { start, end } = req.query;
   console.log(start, end);
 
-  let textQuery = `SELECT * FROM Transaksi t INNER JOIN Transaksi_Sampah ts ON t.transaksi_id = ts.transaksi_id INNER JOIN Sampah s ON ts.sampah_id = s.sampah_id INNER JOIN SUK ON s.suk_id = SUK.suk_id INNER JOIN Harga h ON h.harga_id = ts.harga_id`;
+  let textQuery = `SELECT * FROM Transaksi_Masuk t INNER JOIN Transaksi_Masuk_Sampah ts ON t.transaksi_masuk_id = ts.transaksi_masuk_id INNER JOIN Sampah s ON ts.sampah_id = s.sampah_id INNER JOIN SUK ON s.suk_id = SUK.suk_id INNER JOIN Harga h ON h.harga_id = ts.harga_id`;
 
   const values = [];
   const whereClause = [];
   let placeHolderCtr = 1;
-
-  if (tipe_transaksi && (tipe_transaksi === "masuk" || tipe_transaksi === "keluar")) {
-    whereClause.push(`t.tipe_transaksi = $${placeHolderCtr++}`);
-    values.push(tipe_transaksi);
-  }
 
   if (start) {
     whereClause.push(`t.tanggal::DATE >= $${placeHolderCtr++}`);
@@ -63,7 +58,7 @@ export const getAllTransaksi = async (req, res) => {
     values.push(`'${end}'`);
   }
 
-  if (values.length != 0) {
+  if (values.length !== 0) {
     textQuery += " WHERE ";
     const whereClauseStr = whereClause.join(" AND ");
     textQuery += whereClauseStr;
