@@ -5,17 +5,17 @@ import pool from "../db/db.js";
 import jwt from "jsonwebtoken";
 
 export const register = async (req, res) => {
-  const { password, noHp, alamat, email, kelId } = req.body;
+  const { password, noHp, alamat, email, kelId, nama } = req.body;
 
-  if (!password || !noHp || !alamat || !email || !kelId) {
+  if (!password || !noHp || !alamat || !email || !kelId || !nama) {
     throw new BadRequestError("All specified field must be included");
   }
 
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
 
-  const textQuery = `INSERT INTO Pengguna (no_hp, alamat, email, kel_id, password) VALUES ($1, $2, $3, $4, $5)`;
-  const values = [noHp, alamat, email, kelId, hashedPassword];
+  const textQuery = `INSERT INTO Pengguna (no_hp, alamat, email, kel_id, password, nama) VALUES ($1, $2, $3, $4, $5, $6)`;
+  const values = [noHp, alamat, email, kelId, hashedPassword, nama];
 
   await pool.query(textQuery, values);
 
