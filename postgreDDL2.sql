@@ -15,6 +15,7 @@ CREATE TABLE Pengguna (
     pengguna_id SERIAL PRIMARY KEY,
     password VARCHAR(255) NOT NULL,
     no_hp VARCHAR(30),
+    nama VARCHAR(255) NOT NULL,
     alamat VARCHAR(255), 
     email VARCHAR(255) UNIQUE,
     role pengguna_role NOT NULL DEFAULT 'pengguna',
