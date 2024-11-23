@@ -74,7 +74,8 @@ CREATE TABLE Inventory_Sampah(
 
 CREATE TABLE Transaksi_Keluar(
     transaksi_keluar_id SERIAL PRIMARY KEY,
-    tanggal TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    tanggal TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    bs_pusat_id INT NOT NULL REFERENCES Bs_Pusat(bs_pusat_id)
 );
 
 CREATE TABLE Transaksi_Keluar_Sampah(
