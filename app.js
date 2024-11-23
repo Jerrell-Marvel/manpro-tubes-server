@@ -49,6 +49,7 @@ import sampahRoute from "./routes/sampah.js";
 import transaksiRoute from "./routes/transaksi.js";
 import kelurahanRoute from "./routes/kelurahan.js";
 import kecamatanRoute from "./routes/kecamatan.js";
+import inventoryRoute from "./routes/inventory.js";
 
 // Routes
 app.use("/api", userRoute);
@@ -58,6 +59,7 @@ app.use("/api/sampah", sampahRoute);
 app.use("/api/transaksi", transaksiRoute);
 app.use("/api/kelurahan", kelurahanRoute);
 app.use("/api/kecamatan", kecamatanRoute);
+app.use("/api/inventory", inventoryRoute);
 
 app.use("/test", authMiddleware("pengguna"), (req, res) => {
   return res.json("success");
