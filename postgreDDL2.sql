@@ -31,8 +31,7 @@ CREATE TABLE Bs_Pusat (
 CREATE TABLE Transaksi_Masuk (
     transaksi_masuk_id SERIAL PRIMARY KEY,
     tanggal TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    pengguna_id INT REFERENCES pengguna(pengguna_id) NOT NULL,
-    bs_pusat_id INT REFERENCES Bs_pusat(bs_pusat_id) NOT NULL
+    pengguna_id INT REFERENCES pengguna(pengguna_id) NOT NULL
 );
 
 CREATE TABLE Jenis_Sampah (
@@ -75,9 +74,18 @@ CREATE TABLE Inventory_Sampah(
 
 CREATE TABLE Transaksi_Keluar(
     transaksi_keluar_id SERIAL PRIMARY KEY,
-    sampah_id INT NOT NULL REFERENCES Sampah(sampah_id) UNIQUE,
-    kuantitas INT NOT NULL
+    tanggal TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    bs_pusat_id INT NOT NULL REFERENCES Bs_Pusat(bs_pusat_id)
 );
+
+CREATE TABLE Transaksi_Keluar_Sampah(
+    transaksi_keluar_id INT REFERENCES Transaksi_Keluar(transaksi_keluar_id),
+    sampah_id INT NOT NULL REFERENCES Sampah(sampah_id) UNIQUE,
+    jumlah_sampah INT NOT NULL,
+    harga_id INT REFERENCES Harga(harga_id),
+    PRIMARY KEY (transaksi_keluar_id, sampah_id)
+);
+
 
 CREATE TABLE Transaksi_Masuk_Sampah (
     transaksi_masuk_id INT REFERENCES Transaksi_Masuk(transaksi_masuk_id),

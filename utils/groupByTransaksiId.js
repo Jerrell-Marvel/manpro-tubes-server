@@ -1,7 +1,7 @@
 export function groupByTransaksiId(data) {
   // Group the data by `transaksi_masuk_id`
   const groupedData = data.reduce((result, item) => {
-    const { transaksi_masuk_id, tanggal, pengguna_id, bs_pusat_id, ...sampahData } = item;
+    const { transaksi_masuk_id, tanggal, pengguna_id, ...sampahData } = item;
 
     // Find or create the transaksi object
     let transaksi = result.find((t) => t.transaksi_masuk_id === transaksi_masuk_id);
@@ -10,7 +10,6 @@ export function groupByTransaksiId(data) {
         transaksi_masuk_id,
         tanggal,
         pengguna_id,
-        bs_pusat_id,
         transaksiSampah: [],
       };
       result.push(transaksi);

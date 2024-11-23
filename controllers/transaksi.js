@@ -71,9 +71,9 @@ export const getAllTransaksi = async (req, res) => {
 };
 
 export const createTransaksi = async (req, res, next) => {
-  const { transaksiSampah, penggunaId, bsPusatId } = req.body;
+  const { transaksiSampah, penggunaId } = req.body;
 
-  if (!transaksiSampah || transaksiSampah.length === 0 || !penggunaId || !bsPusatId) {
+  if (!transaksiSampah || transaksiSampah.length === 0 || !penggunaId) {
     throw new BadRequestError("All specified field must be included");
   }
 
@@ -81,8 +81,8 @@ export const createTransaksi = async (req, res, next) => {
   try {
     await client.query("BEGIN");
 
-    const transaksiTextQuery = `INSERT INTO Transaksi_Masuk (pengguna_id, bs_pusat_id) VALUES($1, $2) RETURNING transaksi_masuk_id`;
-    const transaksiValues = [penggunaId, bsPusatId];
+    const transaksiTextQuery = `INSERT INTO Transaksi_Masuk (pengguna_id) VALUES($1) RETURNING transaksi_masuk_id`;
+    const transaksiValues = [penggunaId];
     const transaksiQueryResult = await client.query(transaksiTextQuery, transaksiValues);
     const transaksiId = transaksiQueryResult.rows[0].transaksi_masuk_id;
 
