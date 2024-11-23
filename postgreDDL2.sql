@@ -80,7 +80,7 @@ CREATE TABLE Transaksi_Keluar(
 
 CREATE TABLE Transaksi_Keluar_Sampah(
     transaksi_keluar_id INT REFERENCES Transaksi_Keluar(transaksi_keluar_id),
-    sampah_id INT NOT NULL REFERENCES Sampah(sampah_id) UNIQUE,
+    sampah_id INT NOT NULL REFERENCES Sampah(sampah_id),
     jumlah_sampah INT NOT NULL,
     harga_id INT REFERENCES Harga(harga_id),
     PRIMARY KEY (transaksi_keluar_id, sampah_id)
@@ -94,4 +94,27 @@ CREATE TABLE Transaksi_Masuk_Sampah (
     jumlah_sampah INT NOT NULL,
     PRIMARY KEY (transaksi_masuk_id, sampah_id)
 );
+
+CREATE OR REPLACE FUNCTION check_jumlah_sampah()
+RETURNS TRIGGER AS $$
+BEGIN
+    PERFORM 1 
+    FROM Inventory_Sampah 
+    WHERE sampah_id = NEW.sampah_id AND kuantitas >= NEW.jumlah_sampah;
+
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'Insufficient inventory for sampah_id: %, requested: %, available: %', 
+                        NEW.sampah_id, NEW.jumlah_sampah, 
+                        (SELECT kuantitas FROM Inventory_Sampah WHERE sampah_id = NEW.sampah_id);
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER before_insert_transaksi_keluar_sampah
+BEFORE INSERT ON Transaksi_Keluar_Sampah
+FOR EACH ROW
+EXECUTE FUNCTION check_jumlah_sampah();
+
 
