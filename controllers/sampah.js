@@ -7,7 +7,7 @@ import { query } from "express";
 export const getSampah = async (req, res) => {
   const { jenis_sampah } = req.query;
 
-  let queryText = `SELECT * FROM Sampah s INNER JOIN Jenis_Sampah js ON s.jenis_sampah_id = js.jenis_sampah_id INNER JOIN SUK ON s.suk_id = SUK.suk_id INNER JOIN Harga h on s.harga_id_sekarang = h.harga_id WHERE s.is_active=TRUE`;
+  let queryText = `SELECT * FROM Sampah s INNER JOIN Jenis_Sampah js ON s.jenis_sampah_id = js.jenis_sampah_id INNER JOIN SUK ON s.suk_id = SUK.suk_id INNER JOIN Harga h on s.harga_id_sekarang = h.harga_id  INNER JOIN Inventory_Sampah i ON s.sampah_id=i.sampah_id WHERE s.is_active=TRUE`;
 
   const values = [];
   if (jenis_sampah) {

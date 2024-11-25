@@ -94,13 +94,15 @@ export const updateUser = async (req, res) => {
   }
 
   if (kelurahanId) {
-    penggunaField.push(`kelurahan_id=$${placeHolderIdx++}`);
+    penggunaField.push(`kel_id=$${placeHolderIdx++}`);
     penggunaValues.push(kelurahanId);
   }
 
   const queryText = `UPDATE pengguna SET ${penggunaField.join(", ")} WHERE pengguna_id=$${placeHolderIdx++}`;
   penggunaValues.push(penggunaId);
 
+  console.log(queryText);
+  console.log(penggunaValues);
   const queryResult = await pool.query(queryText, penggunaValues);
 
   if (queryResult.rowCount === 0) {
