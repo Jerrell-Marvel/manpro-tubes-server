@@ -51,6 +51,7 @@ import kelurahanRoute from "./routes/kelurahan.js";
 import kecamatanRoute from "./routes/kecamatan.js";
 import inventoryRoute from "./routes/inventory.js";
 import transaksiKeluarRoute from "./routes/transaksiKeluar.js";
+import statsRoute from "./routes/stats.js";
 
 // Routes
 app.use("/api", userRoute);
@@ -62,6 +63,7 @@ app.use("/api/kelurahan", kelurahanRoute);
 app.use("/api/kecamatan", kecamatanRoute);
 app.use("/api/inventory", inventoryRoute);
 app.use("/api/transaksi/keluar", transaksiKeluarRoute);
+app.use("/api/stats", statsRoute);
 
 app.use("/test", authMiddleware("pengguna"), (req, res) => {
   return res.json("success");
